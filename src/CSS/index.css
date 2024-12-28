@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.glow{
+    transition: all 0.3s ease-in-out;
+}
+
+.glow:hover {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.5); /* Soft White Glow on hover */
+}
+
+.img_glow {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); /* Soft White Glow with opacity */
+}
+
+.b_glow {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Soft White Glow with opacity */
+}
+
+.c_glow {
+  box-shadow: none; /* Initial Soft White Glow with opacity */
+  transition: box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.c_glow:hover {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); /* More intense white glow on hover */
+}
+
+/* Custom styles for Swiper navigation arrows */
+.swiper-button-next,
+.swiper-button-prev {
+  color: white; /* Tailwind color for orange-500 */
+  
+}
+@media (max-width: 640px) { /* Adjust the max-width as needed */
+  .swiper-button-next,
+  .swiper-button-prev {
+    display: none;
+  }
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  color: #818CF8; /* Tailwind color for a slightly darker shade */
+}
+
+
+/* Custom styles for Swiper pagination dots */
+  .swiper-pagination-bullet {
+    background-color: whitesmoke; /* Tailwind color for orange-500 */
+    opacity: 1;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background-color: #818CF8; /* A slightly darker shade for active dot */
+  }
+  
+
+  .fade-in {
+    animation: fadeInDown 0.3s ease-in-out;
+    will-change: opacity, transform; /* Hint for smooth rendering */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /*Set initial shadow */
+  }
+  
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px); /* Start slightly above */
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0); /* End at the original position */
+    }
+  }
+  
+  @keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      /* Softer, gentler white neon glowing text-shadow */
+      text-shadow:
+        -0.1rem -0.1rem 0.5rem #fff,  /* Soft white glow */
+        0.1rem 0.1rem 0.5rem #fff,   /* Soft white glow */
+        0 0 1rem #fff,  /* Soft white glow */
+        0 0 2rem #fff;  /* Soft white glow */
+      
+      /* Softer, gentler white neon glowing box-shadow */
+      box-shadow:
+        0 0 .3rem #fff,  /* Soft white glow */
+        inset 0 0 .3rem #fff,
+        0 0 1rem #fff,  /* Soft white glow */
+        inset 0 0 1rem #fff,
+        0 2rem 4rem #fff,  /* Longer, more pronounced bottom shadow */
+        inset 0 2rem 4rem #fff;  /* Longer, more pronounced bottom shadow */
+    }
+    
+    20%, 24%, 55% {
+      /* No shadow effect during these frames */
+      text-shadow: none;
+      box-shadow: none;
+    }    
+  }
+  hr {
+    background-color: #E5E5E5; /* Light gray color */
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.8); /* Stronger, longer bottom shadow */
+    animation: flicker 5s infinite; /* Flicker every 1 second */
+  }

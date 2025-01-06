@@ -54,7 +54,9 @@ const Banner3 = () => {
           fetchedImages[key] = cache[key];
         } else {
           // Fetch and cache the image as a blob
-          const response = await Axios.get(productImages[key], { responseType: 'blob' });
+          const response = await Axios.get(productImages[key], { responseType: 'blob', headers: { 
+            'ngrok-skip-browser-warning': true
+          } },);
           const blobUrl = URL.createObjectURL(response.data); // Access blob data from response
           fetchedImages[key] = blobUrl;
           cache[key] = blobUrl; // Store blob URL in cache

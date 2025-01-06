@@ -16,10 +16,17 @@ import forland from '../assets/Forland.png'
 import 'swiper/css';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 
+
 const Product = () => {
   const [images, setImages] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const location = useLocation();
+
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+    setLoading(false); // Set loading to false once image has loaded
+  };
 
   useEffect(() => {
     if (location.hash) {
@@ -132,39 +139,90 @@ const Product = () => {
 
   // Fetch images
 // Fetch images and set the images state
-const fetchImages = async () => {
+const fetchImageBlob = async (url) => {
   try {
-    const fetchImages = {};
-
-    // Loop through all product images and fetch from the server
-    const imagePromises = Object.keys(productImages).map(async (key) => {
-      const response = await Axios.get(productImages[key], { responseType: 'blob' });
-      const blobUrl = URL.createObjectURL(response.data); // Create object URL for the image
-
-      fetchImages[key] = blobUrl; // Store the object URL for the image
-    });
-
-    await Promise.all(imagePromises); // Wait for all images to be fetched
-
-    setImages(fetchImages); // Update the images state
-    setLoading(false); // Set loading to false
+    const { data } = await Axios.get(url, { responseType: "blob" });
+    return URL.createObjectURL(data);
   } catch (error) {
-    console.error('Error fetching images:', error);
-    setLoading(false); // Ensure loading is false if an error occurs
+    console.error(`Failed to fetch image from ${url}:`, error);
+    throw error;
   }
 };
 
-// Fetch images once when the component mounts
-useEffect(() => {
-  fetchImages();
-}, []); // No dependency needed
+// Concurrency limiting function
+const fetchWithConcurrencyLimit = async (tasks, limit = 5) => {
+  const results = [];
+  const executing = new Set();
+
+  for (const task of tasks) {
+    const promise = task();
+    results.push(promise);
+
+    executing.add(promise);
+    promise.finally(() => executing.delete(promise));
+
+    if (executing.size >= limit) {
+      await Promise.race(executing); // Wait for one task to complete
+    }
+  }
+
+  await Promise.all(results); // Wait for all tasks to complete
+};
+
+const fetchImages = async () => {
+  const objectUrls = {};
+  const errorKeys = [];
+
+  try {
+    const tasks = Object.entries(productImages).map(([key, url]) => async () => {
+      try {
+        const objectUrl = await fetchImageBlob(url);
+        objectUrls[key] = objectUrl;
+
+        // Incremental state update for progressive rendering
+        setImages((prev) => ({ ...prev, [key]: objectUrl }));
+      } catch (error) {
+        errorKeys.push(key); // Keep track of failed images
+      }
+    });
+
+    // Limit concurrency to 6 tasks at a time
+    await fetchWithConcurrencyLimit(tasks, 6);
+  } catch (error) {
+    console.error("Error fetching images:", error);
+  } finally {
+    setLoading(false); // Ensure loading stops
+  }
+
+  // Cleanup URLs on component unmount
+  return () => {
+    Object.values(objectUrls).forEach((url) => URL.revokeObjectURL(url));
+  };
+};
 
 useEffect(() => {
-  // Revoke object URLs when images are updated or component unmounts
+  let cleanup;
+
+  fetchImages().then((fn) => {
+    cleanup = fn;
+  });
+
+  // Cleanup function to revoke object URLs when the component unmounts
   return () => {
-    Object.values(fetchImages).forEach((url) => URL.revokeObjectURL(url)); // Clean up URLs
+    if (cleanup) cleanup();
   };
-}, [fetchImages]); // Trigger cleanup whenever the fetchImages state changes
+}, []); // Run once when the component mounts
+
+
+// need ayusin to yung taklob dapat lahat ng screen pag nag loloading
+// if (loading) return (
+//   <div className="flex flex-col items-center justify-center h-screen  bg-zinc-900">
+//     <Oval color="#818CF8" secondaryColor="#818CF8" height={80} width={80}  ariaLabel="loading"/>
+//     <p className="mt-4 text-lg text-gray-600">Loading images...</p>
+//   </div>
+// );
+
+
 
   
   const Weichai = [
@@ -275,11 +333,12 @@ useEffect(() => {
 
       <hr data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
       
-      <img  loading='lazy' src={weichai} alt="Weichai" className=' mx-auto lg:h-28 md:h-28 h-28 bg-zinc-300 rounded-lg' />
+      <img  loading='lazy' onLoad={handleImageLoad}  src={weichai} alt="Weichai" className={` mx-auto lg:h-28 md:h-28 h-28 bg-zinc-300 rounded-lg`} />
       <Swiper
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
-        
+        effect="fade"
+         preloadimages="true"
         pagination={{ clickable: true, 
                       el: '.swiper-pagination-custom'
         }}
@@ -290,11 +349,11 @@ useEffect(() => {
           0: { slidesPerView: 1 },
         }}
         loop
-        autoplay={{ delay: 5000 }}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
         className="w-full z-10 "
       >
         {Weichai.map((weichai) => (
-          <SwiperSlide key={weichai.id} >
+          <SwiperSlide aria-live="polite" key={weichai.id} >
             <div className="p-5 flex flex-col justify-between lg:h-[400px] " >
               <h2 id='Weichai'   className="lg:text-xl md:text-xl sm:text-sm  font-bold text-indigo-500 text-center">{weichai.title}</h2>
               <div className="flex flex-col items-center justify-center w-full ">
@@ -302,6 +361,7 @@ useEffect(() => {
                 <img
                 
                   loading="lazy"
+                  onLoad={handleImageLoad}
                   src={weichai.image}
                   alt={weichai.name}
                   className={`${weichai.title === 'Road-Roller' ? 'w-auto h-auto relative bottom-16' : ''} 
@@ -309,9 +369,10 @@ useEffect(() => {
                               ${weichai.title === 'Forklift' ? 'w-auto h-auto relative top-16' : ''} 
                               ${weichai.title === 'Grader' ? 'w-auto h-auto relative top-24' : ''} 
                               ${weichai.title === 'Wheel-Loader' ? 'w-auto h-auto relative top-16' : ''} 
+                              
                               object-cover w-full text-transparent`} 
                 />
-                {loading && (
+                {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
                     <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                   </div>
@@ -339,13 +400,14 @@ useEffect(() => {
       <hr   data-aos="fade-up" className="bg-zinc-100 w-full mb-14 border-0 h-2 rounded-md hr" />
 
       <span></span>
-      <img loading='lazy' src={POWERGEN} alt="PowerQuip" className='mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10' />   
+      <img loading='lazy' onLoad={handleImageLoad}  src={POWERGEN} alt="PowerQuip" className={` mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10`} />   
       <h2 id='Powergen' className="text-xl font-bold text-indigo-500 text-center">15-5850 KVA</h2>  
       <Swiper 
       
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
-        
+        effect="fade"
+         preloadimages="true"
         pagination={{ clickable: true,
                       el: '.swiper-pagination-custompowergen'
          }}
@@ -359,18 +421,19 @@ useEffect(() => {
         className="w-full z-10"
       >
         {Powergen.map((powergen) => (
-          <SwiperSlide key={powergen.id} >
+          <SwiperSlide aria-live="polite" key={powergen.id} >
             <div className="p-5 flex flex-col justify-between lg:h-[400px] ">
               
               <div className="flex flex-col items-center justify-center w-full ">
                 <div className="box-content  p-10 sm:mx-5 md:mx-0 lg:mx-0 border-4 rounded-md bg-zinc-800 drop-shadow-[0_4px_6px_rgba(255,255,255,0.5)]">
                 <img
                   loading="lazy"
+                  onLoad={handleImageLoad}
                   src={powergen.image}
                   alt={powergen.name} 
-                  className='text-transparent'
+                  className={` text-transparent`}
                 />
-                {loading && (
+                {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
                     <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                   </div>
@@ -398,13 +461,14 @@ useEffect(() => {
       <hr   data-aos="fade-up" className="bg-zinc-100 w-full mb-14 border-0 h-2 rounded-md hr" />
 
       <span></span>
-      <img loading='lazy' src={powerquip} alt="PowerQuip" className='mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10' />   
+      <img loading='lazy' onLoad={handleImageLoad}  src={powerquip} alt="PowerQuip" className={` mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10`} />   
       <h2 id='PowerQuip' className="text-xl font-bold text-indigo-500 text-center">18-2750 KVA</h2>  
       <Swiper
       
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
-        
+        effect="fade"
+         preloadimages="true"
         pagination={{ clickable: true,
                       el: '.swiper-pagination-customs'
          }}
@@ -418,18 +482,19 @@ useEffect(() => {
         className="w-full z-10"
       >
         {PowerQuip.map((powerquip) => (
-          <SwiperSlide key={powerquip.id} >
+          <SwiperSlide aria-live="polite" key={powerquip.id} >
             <div className="p-5 flex flex-col justify-between lg:h-[290px] ">
               
               <div className="flex flex-col items-center justify-center w-full ">
                 <div className="box-content  p-10 sm:mx-5 md:mx-0 lg:mx-0 border-4 rounded-md bg-zinc-800 drop-shadow-[0_4px_6px_rgba(255,255,255,0.5)]">
                 <img
                   loading="lazy"
+                  onLoad={handleImageLoad}
                   src={powerquip.image}
                   alt={powerquip.name} 
-                  className='text-transparent'
+                  className={` text-transparent`}
                 />
-                {loading && (
+                {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
                     <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                   </div>
@@ -456,11 +521,12 @@ useEffect(() => {
       
       <hr data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
       <span></span>
-      <img loading='lazy' src={shacman} alt="Shacman" className='mx-auto lg:p-4 md:p-4 h-auto bg-zinc-300 rounded-lg mt-3' />
+      <img loading='lazy' onLoad={handleImageLoad}  src={shacman} alt="Shacman" className={` mx-auto lg:p-4 md:p-4 h-auto bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
-        
+        effect="fade"
+         preloadimages="true"
         pagination={{ clickable: true, 
           el: '.swiper-pagination-customshacman'
 }}
@@ -475,7 +541,7 @@ useEffect(() => {
         className="w-full z-10"
       >
         {Shacman.map((shacman) => (
-          <SwiperSlide key={shacman.id} >
+          <SwiperSlide aria-live="polite" key={shacman.id} >
             <div className="p-5 flex flex-col justify-between lg:h-[400px] ">
        
                 <h2 id='Shacman'   className="text-xl font-bold text-indigo-500 text-center mb-auto">{shacman.title}</h2>
@@ -484,6 +550,7 @@ useEffect(() => {
                 <div className="box-content h-[240px] w-[240px] p-10 border-4 rounded-md bg-zinc-800 drop-shadow-[0_4px_6px_rgba(255,255,255,0.5)]">
                 <img
                   loading="lazy"
+                  onLoad={handleImageLoad}
                   src={shacman.image}
                   alt={shacman.name}
                   className={`${shacman.title === 'Shacman Tractorhead X3000' ? 'w-auto h-full relative top-0' : ''} 
@@ -494,9 +561,10 @@ useEffect(() => {
                               ${shacman.title === 'Shacman Dump Truck H3000' ? 'relative top-3' : ''} 
                               ${shacman.title === 'Shacman Dump Truck X3000' ? ' relative top-3' : ''} 
                               ${shacman.title === 'Ev Shacman' ? 'w-auto h-[200px] relative top-5' : ''}
+                              
                               object-cover w-full text-transparent`} 
                 />
-                {loading && (
+                {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
                     <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                   </div>
@@ -524,11 +592,12 @@ useEffect(() => {
 
       <span></span>
       <hr  data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
-      <img loading='lazy' src={kinglingIsuzu} alt="Kingling Isuzu" className='mx-auto lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3' />
+      <img loading='lazy' onLoad={handleImageLoad}  src={kinglingIsuzu} alt="Kingling Isuzu" className={` mx-auto lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
-        
+        effect="fade"
+         preloadimages="true"
         pagination={{ clickable: true, 
           el: '.swiper-pagination-customkinglingisuzu'
 }}
@@ -543,7 +612,7 @@ useEffect(() => {
         className="w-full z-10"
       >
         {KinglingIsuzu.map((kinglingIsuzu) => (
-          <SwiperSlide key={kinglingIsuzu.id} >
+          <SwiperSlide aria-live="polite" key={kinglingIsuzu.id} >
             <div className="p-5 flex flex-col justify-between lg:h-[400px] ">
        
               <h2 id='KinglingIsuzu'  
@@ -561,6 +630,7 @@ useEffect(() => {
                 <div className="box-content h-[240px] w-[240px] p-10 border-4 rounded-md bg-zinc-800 drop-shadow-[0_4px_6px_rgba(255,255,255,0.5)]">
                 <img
                   loading="lazy"
+                  onLoad={handleImageLoad}
                   src={kinglingIsuzu.image}
                   alt={kinglingIsuzu.name}
                   className={`${kinglingIsuzu.title === 'Isuzu 700 PFFR' ? ' h-auto w-auto relative top-8' : ''}
@@ -586,9 +656,10 @@ useEffect(() => {
                               ${kinglingIsuzu.title === 'Isuzu Sewage' ? ' h-auto w-auto relative top-20' : ''}
                               ${kinglingIsuzu.title === 'NKR 600P' ? ' h-auto w-auto relative top-10' : ''}
                               ${kinglingIsuzu.title === 'NPR 700P' ? ' h-auto w-auto relative top-10' : ''}
+                              
                               object-cover w-full text-transparent`} 
                 />
-                {loading && (
+                {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
                     <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                   </div>
@@ -616,11 +687,12 @@ useEffect(() => {
 
       <span></span>
       <hr  data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
-      <img loading='lazy' src={sinotruck} alt="Sinotruck" className='mx-auto  lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3' />
+      <img loading='lazy' onLoad={handleImageLoad}  src={sinotruck} alt="Sinotruck" className={` mx-auto lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
-        
+        effect="fade"
+         preloadimages="true"
         pagination={{ clickable: true, 
           el: '.swiper-pagination-customsinotruck'
 }}
@@ -635,7 +707,7 @@ useEffect(() => {
         className="w-full z-10"
        >
         {Sinotruck.map((sinotruck) => (
-          <SwiperSlide key={sinotruck.id} >
+          <SwiperSlide aria-live="polite" key={sinotruck.id} >
             <div className="p-5 flex flex-col justify-between lg:h-[400px] ">
        
               <h2  id='Sinotruck' className="lg:text-xl md:text-xl sm:text-sm  font-bold text-indigo-500 text-center ">{sinotruck.title}</h2>
@@ -644,6 +716,7 @@ useEffect(() => {
                 <div className="box-content h-[240px] w-[240px] p-10 border-4 rounded-md bg-zinc-800 drop-shadow-[0_4px_6px_rgba(255,255,255,0.5)]">
                 <img
                   loading="lazy"
+                  onLoad={handleImageLoad}
                   src={sinotruck.image}
                   alt={sinotruck.name}
                   className={`${sinotruck.title === 'Cargo Truck 6 Wheeler' ? 'w-full h-full relative top-6' : ''} 
@@ -656,10 +729,11 @@ useEffect(() => {
                               ${sinotruck.title === 'Mixer Truck 4 Cubic' ? 'w-auto h-[200px] relative top-6' : ''}
                               ${sinotruck.title === 'Mixer Truck 6 Cubic' ? 'w-auto h-full relative top-6' : ''}
                               ${sinotruck.title === 'Oil Fuel Water Tanker 4 Cubic' ? 'w-auto h-full relative top-6' : ''}
-                               ${sinotruck.title === 'Oil Fuel Water Tanker 10 Cubic' ? 'w-auto h-full relative top-2' : ''} 
+                              ${sinotruck.title === 'Oil Fuel Water Tanker 10 Cubic' ? 'w-auto h-full relative top-2' : ''} 
+                              
                               object-cover w-full text-transparent`} 
                 />
-                {loading && (
+                {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
                     <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                   </div>
@@ -687,11 +761,12 @@ useEffect(() => {
 
      <span id=''></span>
      <hr  data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
-      <img loading='lazy' src={forland} alt="Forland" className='mx-auto  lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3' />
+      <img loading='lazy' onLoad={handleImageLoad}  src={forland} alt="Forland" className={` mx-auto  lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
-        
+        effect="fade"
+         preloadimages="true"
         pagination={{ clickable: true, 
           el: '.swiper-pagination-customforland'
 }}
@@ -706,7 +781,7 @@ useEffect(() => {
         className="w-full z-10"
        >
         {Forland.map((forland) => (
-          <SwiperSlide key={forland.id} >
+          <SwiperSlide aria-live="polite" key={forland.id} >
             <div className="p-5 flex flex-col justify-between lg:h-[400px] ">
        
                 <h2  id='Forland' className="lg:text-xl md:text-xl sm:text-sm font-bold text-indigo-500 text-center">{forland.title}</h2>
@@ -715,6 +790,7 @@ useEffect(() => {
                 <div className="box-content h-[240px] w-[240px] p-10 border-4 rounded-md bg-zinc-800 drop-shadow-[0_4px_6px_rgba(255,255,255,0.5)]">
                 <img
                   loading="lazy"
+                  onLoad={handleImageLoad}
                   src={forland.image}
                   alt={forland.name}
                   className={`${forland.title === 'Forland Cargo Truck 14Realft' ? 'w-auto h-auto relative top-10 object-cover' : ''} 
@@ -730,9 +806,10 @@ useEffect(() => {
                               ${forland.title === 'Forland T5 4x2 Dump Truck ' ? 'w-auto h-auto relative top-6' : ''} 
                               ${forland.title === 'Forland Cargo Truck 17ft' ? 'w-auto h-auto relative top-20' : ''} 
                               ${forland.title === 'Forland Dump Truck 3cbm' ? 'w-auto h-full relative top-10' : ''} 
+                              
                               object-cover w-full text-transparent`} 
                 />
-                {loading && (
+                {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
                     <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                   </div>

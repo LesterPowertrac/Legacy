@@ -9,7 +9,6 @@ const Navbar = () => {
   const [click, setClick] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const handleClick = () => {
     setClick(!click);
     window.scrollTo({ top: 0, behavior: 'smooth' });

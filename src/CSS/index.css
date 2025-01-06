@@ -56,6 +56,15 @@
     background-color: #818CF8; /* A slightly darker shade for active dot */
   }
   
+  /* Add this in your CSS */
+.blur {
+  filter: blur(10px);
+  transition: filter 0.3s ease;
+}
+
+.loaded {
+  filter: blur(0);
+}
 
   .fade-in {
     animation: fadeInDown 0.3s ease-in-out;

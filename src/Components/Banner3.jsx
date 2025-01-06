@@ -10,6 +10,7 @@ import 'swiper/css/autoplay';
 const Banner3 = () => {
   const [images, setImages] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const cache = {};
   
@@ -74,16 +75,17 @@ const Banner3 = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex flex-col items-center justify-center h-screen">
         <Oval
           height={80}
           width={80}
           color="#818CF8"
           secondaryColor="#818CF8"
-          strokeWidth={5}
           ariaLabel="loading"
         />
+        <p className="mt-4 text-lg text-gray-600">Loading images...</p>
       </div>
+      
     );
   }
 
@@ -94,43 +96,43 @@ const Banner3 = () => {
         <div className="grid lg:grid-cols-3  grid-cols-1 justify-around gap-10">
             <div data-aos="fade-up" className='bg-zinc-300 flex flex-col items-center justify-center rounded-3xl h-30 w-64 border-2 border-zinc-400 c_glow'>
               <Link to="/product#Weichai">
-                <img loading="lazy" src={images.Weichai} alt="Weichai Heavy Equipment" className='p-3' />
+                <img loading="lazy" onLoad={() => setIsLoaded(true)}  src={images.Weichai} alt="Weichai Heavy Equipment" className={`p-3 ${isLoaded ? 'loaded' : 'blur'}`} />
               </Link>
             </div>
 
             <div data-aos="fade-down" className='bg-zinc-300 flex flex-col items-center justify-center rounded-3xl h-30 w-64 border-2 border-zinc-400 c_glow'>
               <Link to="/product#PowerQuip">
-                <img loading="lazy" src={images.PowerQuip} alt="Power Quip" className='p-3' />
+                <img loading="lazy" onLoad={() => setIsLoaded(true)} src={images.PowerQuip} alt="Power Quip" className={`p-3 ${isLoaded ? 'loaded' : 'blur'}`} />
               </Link>
             </div>
 
             <div  data-aos="fade-up" className='bg-zinc-300 flex flex-col items-center justify-center rounded-3xl h-30 w-64 border-2 border-zinc-400 c_glow'>
               <Link to="/product#Powergen">  
-                <img loading="lazy" src={images.Powergen} alt="Weichai Powergen" className='p-3' />
+                <img loading="lazy" onLoad={() => setIsLoaded(true)} src={images.Powergen} alt="Weichai Powergen" className={`p-3 ${isLoaded ? 'loaded' : 'blur'}`} />
               </Link>
             </div>
 
             <div  data-aos="fade-up" className='bg-zinc-300 flex flex-col items-center justify-center rounded-3xl h-30 w-64 border-2 border-zinc-400 c_glow'>
               <Link to="/product#Shacman">  
-                <img loading="lazy" src={images.Shacman} alt="Shacman" className='p-3' />
+                <img loading="lazy" onLoad={() => setIsLoaded(true)} src={images.Shacman} alt="Shacman" className={`p-3 ${isLoaded ? 'loaded' : 'blur'}`} />
               </Link>
             </div>
 
             <div data-aos="fade-down" className='bg-zinc-300 flex flex-col items-center justify-center rounded-3xl h-30 w-64 border-2 border-zinc-400 c_glow'>
               <Link to="/product#Sinotruck">  
-                <img loading="lazy" src={images.Sinotruck} alt="Sinotruck" className='p-3' />
+                <img loading="lazy" onLoad={() => setIsLoaded(true)} src={images.Sinotruck} alt="Sinotruck" className={`p-3 ${isLoaded ? 'loaded' : 'blur'}`} />
               </Link>
             </div>
 
             <div  data-aos="fade-up" className='bg-zinc-300 flex flex-col items-center justify-center rounded-3xl h-30 w-64 border-2 border-zinc-400 c_glow '>
               <Link to="/product#Forland">  
-                <img loading="lazy" src={images.Forland}  alt="Forland Logo" className='p-3'  />
+                <img loading="lazy" onLoad={() => setIsLoaded(true)} src={images.Forland}  alt="Forland Logo" className={`p-3 ${isLoaded ? 'loaded' : 'blur'}`}  />
               </Link>
             </div>
 
             <div  data-aos="fade-up" className='bg-zinc-300  flex flex-col items-center justify-center rounded-3xl h-30 w-64 border-2 border-zinc-400 c_glow lg:col-start-2'>
               <Link to="/product#KinglingIsuzu">  
-                <img loading="lazy" src={images.KinglingIsuzu} alt="Kingling Isuzu" className='p-3' />
+                <img loading="lazy" onLoad={() => setIsLoaded(true)} src={images.KinglingIsuzu} alt="Kingling Isuzu" className={`p-3 ${isLoaded ? 'loaded' : 'blur'}`} />
               </Link>
             </div>
 
@@ -149,10 +151,10 @@ const Banner3 = () => {
       >
         {/* Slide 1 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' src={images.Weichai} alt="Weichai" className='mx-auto lg:h-32 lg:w-9/12 md:h-40 h-auto bg-zinc-300 rounded-lg' />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Weichai} alt="Weichai" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-32 lg:w-9/12 md:h-40 h-auto bg-zinc-300 rounded-lg`} />
           <div className="gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
-              <img loading='lazy' src={images.Homepage_weichai} alt="Weichai" className='max-h-full max-w-full object-contain' />
+              <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_weichai} alt="Weichai" className={` ${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />
             </div>
           </div>
     
@@ -167,10 +169,10 @@ const Banner3 = () => {
 
         {/* Slide 2 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' src={images.PowerQuip} alt="Power Quip" className='mx-auto md:h-40 lg:h-32 h-auto bg-zinc-300 rounded-lg p-5' />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.PowerQuip} alt="Power Quip" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto md:h-40 lg:h-32 h-auto bg-zinc-300 rounded-lg p-5`} />
           <div className="gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
-              <img loading='lazy' src={images.Homepage_powerquip} alt="PowerQuip" className='max-h-full max-w-full object-contain' />
+              <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_powerquip} alt="PowerQuip" className={`${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />
             </div>
           </div>
         
@@ -185,10 +187,10 @@ const Banner3 = () => {
 
         {/* Slide 2.5 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' src={images.Powergen} alt="Weichai Powergen" className='mx-auto md:h-40 lg:h-32 h-auto bg-zinc-300 rounded-lg p-5' />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Powergen} alt="Weichai Powergen" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto md:h-40 lg:h-32 h-auto bg-zinc-300 rounded-lg p-5`} />
           <div className="gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
-              <img loading='lazy' src={images.Homepage_weichaigenerator} alt="Weichai Powergen" className='max-h-full max-w-full object-contain' />
+              <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_weichaigenerator} alt="Weichai Powergen" className={`${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />
             </div>
           </div>
         
@@ -203,10 +205,10 @@ const Banner3 = () => {
 
         {/* Slide 3 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' src={images.Shacman} alt="Shacman" className='mx-auto lg:p-[1.8rem] md:p-[1.8rem] p-[2rem] bg-zinc-300 rounded-lg' />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Shacman} alt="Shacman" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:p-[1.8rem] md:p-[1.8rem] p-[2rem] bg-zinc-300 rounded-lg`} />
           <div className="grid gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
-              <img loading='lazy' src={images.Homepage_shacman} alt="Tractor Head H3000" className='max-h-full max-w-full object-contain' />
+              <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_shacman} alt="Tractor Head H3000" className={`${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />
             </div>
           </div>
           <div className='absolute lg:inset-5 inset-2 flex items-center justify-center opacity-0 hover:opacity-100 rounded-md bg-zinc-900 bg-opacity-50 transition-opacity duration-300'>
@@ -220,10 +222,10 @@ const Banner3 = () => {
 
         {/* Slide 4 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' src={images.KinglingIsuzu} alt="Kingling Isuzu" className='mx-auto lg:h-32 md:h-40 h-auto bg-zinc-300 rounded-lg' />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.KinglingIsuzu} alt="Kingling Isuzu" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-32 md:h-40 h-auto bg-zinc-300 rounded-lg`} />
           <div className="gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
-              <img loading='lazy' src={images.Homepage_kinglingisuzu} alt="Kingling Isuzu" className='max-h-full max-w-full object-contain' />
+              <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_kinglingisuzu} alt="Kingling Isuzu" className={`${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />
             </div>
           </div>
           <div className='absolute lg:inset-5 inset-2 flex items-center justify-center opacity-0 hover:opacity-100 rounded-md bg-zinc-900 bg-opacity-50 transition-opacity duration-300'>
@@ -237,10 +239,10 @@ const Banner3 = () => {
 
         {/* Slide 5 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' src={images.Sinotruck} alt="Sinotruck" className='mx-auto lg:h-32 md:h-40 h-auto bg-zinc-300 rounded-lg' />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Sinotruck} alt="Sinotruck" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-32 md:h-40 h-auto bg-zinc-300 rounded-lg`} />
           <div className="gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
-              <img loading='lazy' src={images.Homepage_sinotruck} alt="Sinotruck" className='max-h-full max-w-full object-contain' />
+              <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_sinotruck} alt="Sinotruck" className={`${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />
             </div>
           </div>
           <div className='absolute lg:inset-5 inset-2 flex items-center justify-center opacity-0 hover:opacity-100 rounded-md bg-zinc-900 bg-opacity-50 transition-opacity duration-300'>
@@ -254,10 +256,10 @@ const Banner3 = () => {
 
         {/* Slide 6 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' src={images.Forland} alt="Forland" className='mx-auto lg:h-32 md:h-40 h-auto bg-zinc-300 rounded-lg' />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Forland} alt="Forland" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-32 md:h-40 h-auto bg-zinc-300 rounded-lg`} />
           <div className="gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
-              <img loading='lazy' src={images.Homepage_forland} alt="Forland" className='max-h-full max-w-full object-contain' />
+              <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_forland} alt="Forland" className={`${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />
             </div>
           </div>
           <div className='absolute lg:inset-5 inset-2 flex items-center justify-center opacity-0 hover:opacity-100 rounded-md bg-zinc-900 bg-opacity-50 transition-opacity duration-300'>

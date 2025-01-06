@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AiFillFacebook, AiFillInstagram } from "react-icons/ai";
 import img from '../assets/LogoLegacy.png'
@@ -6,6 +6,7 @@ import img2 from '../assets/TheLegacy.png'
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 
 const About = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -27,9 +28,9 @@ const About = () => {
       </Helmet>      
       
       <div  className='lg:px-56 px lg:py-0 py-20 text-center gap-5 lg-text-start flex lg:flex-row flex-col-reverse justify-between lg:gap-28 items-center '>
-      <img loading='lazy' src={img} width={290} height={290} className="rounded border-2 p-1 border-zinc-200 img_glow" alt='Logo'/>
+      <img loading='lazy' onLoad={() => setIsLoaded(true)}  src={img} width={290} height={290} className={`${isLoaded ? 'loaded' : 'blur'} rounded border-2 p-1 border-zinc-200 img_glow`} alt='Logo'/>
           <div  className='h-full lg:py-20 flex flex-col justify-center lg:items-center items-center lg:mx-auto mx-5 text-white'>
-          <img loading='lazy' data-aos="fade-down" src={img2}  className="border-2 p-1 border-zinc-200 img_glow " alt='Logo'/>
+          <img loading='lazy' onLoad={() => setIsLoaded(true)}  data-aos="fade-down" src={img2}  className={`border-2 p-1 border-zinc-200 img_glow`} alt='Logo'/>
           <br />
           <h1 data-aos="fade-right" className='text-[48px] font-semibold mb-3 leading-normal uppercase text-indigo-500 lg:mx-auto mx-5'>About Us</h1>
               <div  data-aos="fade-left" >

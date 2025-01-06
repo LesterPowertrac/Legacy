@@ -6,9 +6,9 @@ import background from '../assets/background_new.png'
 import AOS from 'aos';
 import 'aos/dist/aos.css'
 
-
 const Banner = () => {
 
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef();
 
@@ -38,14 +38,14 @@ return () => observer.disconnect();
 
   return (
     <div  data-aos="fade-up"      ref={ref}
-    style={isVisible ? { backgroundImage: `url(${background})` } : {}} className='bg-cover bg-center bg-fixed  pb-10'>
-      <div   className=' lg:px-32 lg:py-0 py-20 text-center gap-5 lg-text-start flex lg:flex-row flex-col-reverse justify-between lg:gap-28 items-center lg:mx-auto mx-5'>
+    style={{ backgroundImage: `url(${background})` }} className='bg-cover bg-center bg-fixed  pb-10' >
+      <div   className=' lg:px-32 lg:py-0 py-20 text-center gap-5 lg-text-start flex lg:flex-row flex-col-reverse justify-between lg:gap-28 items-center lg:mx-auto mx-5'>  
+   
+        <img  loading='lazy'  onLoad={() => setIsLoaded(true)}  src={img} width={300} height={290} className={`p-1 border-white ${isLoaded ? 'loaded' : 'blur'}`} alt='Logo of Legacy'/>
      
-        <img  loading='lazy'  src={img} width={300} height={290} className="  p-1 border-white  " alt='Logo of Legacy'/>
-
           <div className='h-full lg:py-40 flex flex-col justify-center lg:items-center items-center text-white'>
               <h1 className='text-[42px] font-semibold  leading-none'>Welcome To  </h1>
-              <img loading='lazy'  src={Legacy} alt="The Legacy Truck And Tractors INC," />
+              <img loading='lazy'   onLoad={() => setIsLoaded(true)}  src={Legacy} alt="The Legacy Truck And Tractors INC," className={`${isLoaded ? 'loaded' : 'blur'}`}/>
               <p className=''>THE LEGACY OF EXCELLENCE</p>
               <div className='flex items-center justify-center'>
                 <div className="flex space-x-2"></div>

@@ -140,7 +140,7 @@ const Banner3 = () => {
 
         </div>
           {/* Slider Component */}
-          <div className='mt-16 w-full overflow-hidden lg:-mb-20' data-aos="fade-up">
+          <div className='mt-16 lg:h-full lg:w-full md:h-full md:w-full w-screen h-full overflow-hidden -mb-20' data-aos="fade-up">
       <Swiper
         modules={[Navigation, Autoplay]}
         spaceBetween={50}
@@ -148,12 +148,12 @@ const Banner3 = () => {
         navigation
         // pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
-        className="w-full"
+        className="w-full h-auto"
         loop
       >
         {/* Slide 1 */}
         <SwiperSlide className="p-10 flex flex-col items-center justify-center">
-          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Weichai} alt="Weichai" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-32 lg:w-9/12 md:h-40 h-auto bg-zinc-300 rounded-lg`} />
+          <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Weichai} alt="Weichai" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-32 lg:w-9/12 md:h-40 h-auto w-56 bg-zinc-300 rounded-lg`} />
           <div className="gap-10 mt-6 items-center justify-center">
             <div className='lg:h-96 flex items-center justify-center'>
               <img loading='lazy' onLoad={() => setIsLoaded(true)} src={images.Homepage_weichai} alt="Weichai" className={` ${isLoaded ? 'loaded' : 'blur'} max-h-full max-w-full object-contain`} />

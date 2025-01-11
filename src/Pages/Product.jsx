@@ -24,8 +24,8 @@ const Product = () => {
   const location = useLocation();
 
   const handleImageLoad = () => {
+    setLoading(false);
     setIsLoaded(true);
-    setLoading(false); // Set loading to false once image has loaded
   };
 
   useEffect(() => {
@@ -51,12 +51,12 @@ const Product = () => {
 
   const productImages = {
 
-    Weichai: `${apiUrl}/products/Weichai`, // products
-    PowerQuip: `${apiUrl}/products/PowerQuip`, 
-    Shacman: `${apiUrl}/products/Shacman`, 
-    KinglingIsuzu: `${apiUrl}/products/KinglingIsuzu`, 
-    Sinotruck: `${apiUrl}/products/Sinotruck`, 
-    Forland: `${apiUrl}/products/Forland`,
+    // Weichai: `${apiUrl}/products/Weichai`, // products
+    // PowerQuip: `${apiUrl}/products/PowerQuip`, 
+    // Shacman: `${apiUrl}/products/Shacman`, 
+    // KinglingIsuzu: `${apiUrl}/products/KinglingIsuzu`, 
+    // Sinotruck: `${apiUrl}/products/Sinotruck`, 
+    // Forland: `${apiUrl}/products/Forland`,
 
     Excavator: `${apiUrl}/products/Excavator`, //Weichai
     RoadRoller: `${apiUrl}/products/RoadRoller`,
@@ -99,7 +99,6 @@ const Product = () => {
     GigaBoomRed: `${apiUrl}/products/GigaBoomRed`, 
     GigaMixerTruck10W10CBM: `${apiUrl}/products/GigaMixerTruck10W(10CBM)`, 
     GTH6x4300HP: `${apiUrl}/products/GTH6x4300HP`, 
-    HOWOT7: `${apiUrl}/products/HOWOT7`, 
     Isuzu6WGarbage: `${apiUrl}/products/Isuzu6WGarbage`, 
     IsuzuBus: `${apiUrl}/products/IsuzuBus`, 
     IsuzuFVR6Wheeler6000LitersPTOFireTruck: `${apiUrl}/products/IsuzuFVR6Wheeler6000LitersPTOFireTruck`, 
@@ -109,12 +108,12 @@ const Product = () => {
     NPR700P: `${apiUrl}/products/NPR700P`, 
    
     CargoTruck6Wheeler: `${apiUrl}/products/CargoTruck6Wheeler`, //Sinotruck
-    CargoTruck6WheelerVersion2: `${apiUrl}/products/CargoTruck6WheelerVersion2`,
+    // CargoTruck6WheelerVersion2: `${apiUrl}/products/CargoTruck6WheelerVersion2`,
     DumpTruck4Cubic: `${apiUrl}/products/DumpTruck4Cubic`,
     DumpTruck12Cubic: `${apiUrl}/products/DumpTruck12Cubic`,
     GarbageTruck5Cubic: `${apiUrl}/products/GarbageTruck5Cubic`,
     HOWOFBBody: `${apiUrl}/products/HOWOFBBody`,
-    ManliftTruck4x2: `${apiUrl}/products/Manlift Truck 4x2`,
+    ManliftTruck4x2: `${apiUrl}/products/Manlift_Truck_4x2`,
     MixerTruck4Cubic: `${apiUrl}/products/MixerTruck4Cubic`,
     MixerTruck6Cubic: `${apiUrl}/products/MixerTruck6Cubic`,
     OilFuelWaterTanker4Cubic: `${apiUrl}/products/OilFuelWaterTanker4Cubic`,
@@ -125,14 +124,14 @@ const Product = () => {
     ForlandCargoTruck17ft: `${apiUrl}/products/ForlandCargoTruck17ft`,
     ForlandDumpTruck6cbm: `${apiUrl}/products/ForlandDumpTruck6cbm`,
     Forlanddumptruck3cbm: `${apiUrl}/products/forlanddumptruck3cbm`,
-    H7: `${apiUrl}/products/H7`,
+    H7: `${apiUrl}/products/L7`,
     L3: `${apiUrl}/products/L3`,
     L5: `${apiUrl}/products/L5`,
     M6: `${apiUrl}/products/M6`,
     T3: `${apiUrl}/products/T3`,
     T5: `${apiUrl}/products/T5`,
     T5Class1: `${apiUrl}/products/T5Class1`,
-    T54x2: `${apiUrl}/products/T5 4x2`,
+    T54x2: `${apiUrl}/products/T5_4x2`,
 
 };
 
@@ -152,7 +151,7 @@ const fetchImageBlob = async (url) => {
 };
 
 // Concurrency limiting function
-const fetchWithConcurrencyLimit = async (tasks, limit = 5) => {
+const fetchWithConcurrencyLimit = async (tasks, limit = 100) => {
   const results = [];
   const executing = new Set();
 
@@ -189,7 +188,7 @@ const fetchImages = async () => {
     });
 
     // Limit concurrency to 6 tasks at a time
-    await fetchWithConcurrencyLimit(tasks, 6);
+    await fetchWithConcurrencyLimit(tasks, 100);
   } catch (error) {
     console.error("Error fetching images:", error);
   } finally {
@@ -335,8 +334,9 @@ useEffect(() => {
 
       <hr data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
       
-      <img  loading='lazy' onLoad={handleImageLoad}  src={weichai} alt="Weichai" className={` mx-auto lg:h-28 md:h-28 h-28 bg-zinc-300 rounded-lg`} />
+      <img  loading='lazy' onLoad={handleImageLoad}  src={weichai} alt="Weichai" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-28 md:h-28 h-28 bg-zinc-300 rounded-lg`} />
       <Swiper
+     
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
         effect="fade"
@@ -371,7 +371,7 @@ useEffect(() => {
                               ${weichai.title === 'Forklift' ? 'w-auto h-auto relative top-16' : ''} 
                               ${weichai.title === 'Grader' ? 'w-auto h-auto relative top-24' : ''} 
                               ${weichai.title === 'Wheel-Loader' ? 'w-auto h-auto relative top-16' : ''} 
-                              
+                              ${isLoaded ? 'loaded' : 'blur'}
                               object-cover w-full text-transparent`} 
                 />
                 {!isLoaded && loading && (
@@ -402,10 +402,10 @@ useEffect(() => {
       <hr   data-aos="fade-up" className="bg-zinc-100 w-full mb-14 border-0 h-2 rounded-md hr" />
 
       <span></span>
-      <img loading='lazy' onLoad={handleImageLoad}  src={POWERGEN} alt="PowerQuip" className={` mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10`} />   
+      <img loading='lazy' onLoad={handleImageLoad}  src={POWERGEN} alt="PowerQuip" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10`} />   
       <h2 id='Powergen' className="text-xl font-bold text-indigo-500 text-center">15-5850 KVA</h2>  
       <Swiper 
-      
+      data-aos="fade-up"
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
         effect="fade"
@@ -433,7 +433,7 @@ useEffect(() => {
                   onLoad={handleImageLoad}
                   src={powergen.image}
                   alt={powergen.name} 
-                  className={` text-transparent`}
+                  className={`${isLoaded ? 'loaded' : 'blur'} text-transparent`}
                 />
                 {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
@@ -463,10 +463,10 @@ useEffect(() => {
       <hr   data-aos="fade-up" className="bg-zinc-100 w-full mb-14 border-0 h-2 rounded-md hr" />
 
       <span></span>
-      <img loading='lazy' onLoad={handleImageLoad}  src={powerquip} alt="PowerQuip" className={` mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10`} />   
+      <img loading='lazy' onLoad={handleImageLoad}  src={powerquip} alt="PowerQuip" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-24 md:h-28 h-28 rounded-lg mt-10`} />   
       <h2 id='PowerQuip' className="text-xl font-bold text-indigo-500 text-center">18-2750 KVA</h2>  
       <Swiper
-      
+      data-aos="fade-up"
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
         effect="fade"
@@ -494,7 +494,7 @@ useEffect(() => {
                   onLoad={handleImageLoad}
                   src={powerquip.image}
                   alt={powerquip.name} 
-                  className={` text-transparent`}
+                  className={`${isLoaded ? 'loaded' : 'blur'} text-transparent`}
                 />
                 {!isLoaded && loading && (
                   <div className="flex flex-col items-center justify-center">
@@ -523,8 +523,9 @@ useEffect(() => {
       
       <hr data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
       <span></span>
-      <img loading='lazy' onLoad={handleImageLoad}  src={shacman} alt="Shacman" className={` mx-auto lg:p-4 md:p-4 h-auto bg-zinc-300 rounded-lg mt-3`} />
+      <img loading='lazy' onLoad={handleImageLoad}  src={shacman} alt="Shacman" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:p-4 md:p-4 h-auto bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
+      data-aos="fade-up"
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
         effect="fade"
@@ -563,7 +564,7 @@ useEffect(() => {
                               ${shacman.title === 'Shacman Dump Truck H3000' ? 'relative top-3' : ''} 
                               ${shacman.title === 'Shacman Dump Truck X3000' ? ' relative top-3' : ''} 
                               ${shacman.title === 'Ev Shacman' ? 'w-auto h-[200px] relative top-5' : ''}
-                              
+                              ${isLoaded ? 'loaded' : 'blur'}
                               object-cover w-full text-transparent`} 
                 />
                 {!isLoaded && loading && (
@@ -594,8 +595,9 @@ useEffect(() => {
 
       <span></span>
       <hr  data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
-      <img loading='lazy' onLoad={handleImageLoad}  src={kinglingIsuzu} alt="Kingling Isuzu" className={` mx-auto lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
+      <img loading='lazy' onLoad={handleImageLoad}  src={kinglingIsuzu} alt="Kingling Isuzu" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
+      data-aos="fade-up"
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
         effect="fade"
@@ -658,7 +660,7 @@ useEffect(() => {
                               ${kinglingIsuzu.title === 'Isuzu Sewage' ? ' h-auto w-auto relative top-20' : ''}
                               ${kinglingIsuzu.title === 'NKR 600P' ? ' h-auto w-auto relative top-10' : ''}
                               ${kinglingIsuzu.title === 'NPR 700P' ? ' h-auto w-auto relative top-10' : ''}
-                              
+                              ${isLoaded ? 'loaded' : 'blur'}
                               object-cover w-full text-transparent`} 
                 />
                 {!isLoaded && loading && (
@@ -689,8 +691,9 @@ useEffect(() => {
 
       <span></span>
       <hr  data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
-      <img loading='lazy' onLoad={handleImageLoad}  src={sinotruck} alt="Sinotruck" className={` mx-auto lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
+      <img loading='lazy' onLoad={handleImageLoad}  src={sinotruck} alt="Sinotruck" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
+      data-aos="fade-up"
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
         effect="fade"
@@ -732,7 +735,7 @@ useEffect(() => {
                               ${sinotruck.title === 'Mixer Truck 6 Cubic' ? 'w-auto h-full relative top-6' : ''}
                               ${sinotruck.title === 'Oil Fuel Water Tanker 4 Cubic' ? 'w-auto h-full relative top-6' : ''}
                               ${sinotruck.title === 'Oil Fuel Water Tanker 10 Cubic' ? 'w-auto h-full relative top-2' : ''} 
-                              
+                              ${isLoaded ? 'loaded' : 'blur'}
                               object-cover w-full text-transparent`} 
                 />
                 {!isLoaded && loading && (
@@ -763,8 +766,9 @@ useEffect(() => {
 
      <span id=''></span>
      <hr  data-aos="fade-up" className="bg-zinc-100 w-full mb-16 border-0 h-2 rounded-md hr" />
-      <img loading='lazy' onLoad={handleImageLoad}  src={forland} alt="Forland" className={` mx-auto  lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
+      <img loading='lazy' onLoad={handleImageLoad}  src={forland} alt="Forland" className={`${isLoaded ? 'loaded' : 'blur'} mx-auto  lg:h-24 md:h-28 h-28 bg-zinc-300 rounded-lg mt-3`} />
       <Swiper
+      data-aos="fade-up"
         modules={[Pagination, Autoplay]}
         spaceBetween={20}
         effect="fade"
@@ -808,7 +812,7 @@ useEffect(() => {
                               ${forland.title === 'Forland T5 4x2 Dump Truck ' ? 'w-auto h-auto relative top-6' : ''} 
                               ${forland.title === 'Forland Cargo Truck 17ft' ? 'w-auto h-auto relative top-20' : ''} 
                               ${forland.title === 'Forland Dump Truck 3cbm' ? 'w-auto h-full relative top-10' : ''} 
-                              
+                              ${isLoaded ? 'loaded' : 'blur'}
                               object-cover w-full text-transparent`} 
                 />
                 {!isLoaded && loading && (

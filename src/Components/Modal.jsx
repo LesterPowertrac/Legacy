@@ -10,8 +10,8 @@ const Modal = ({ success, error, onClose }) => {
     <div className="fixed inset-0  bg-gray-800  backdrop-blur-sm bg-opacity-50 z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <div className="flex justify-center items-center ">
-          {success && <CiCircleCheck className='text-6xl font-semibold text-orange-500'/>}
-          {error && <CiCircleRemove className='text-6xl font-semibold text-fuchsia-500'/>}
+          {success && <CiCircleCheck className='text-6xl font-semibold text-green-500'/>}
+          {error && <CiCircleRemove className='text-6xl font-semibold text-red-500'/>}
           {/* <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
             &times;
           </button> */}
@@ -23,7 +23,7 @@ const Modal = ({ success, error, onClose }) => {
         <div className="mt-5 text-center">
           <button
             onClick={onClose}
-            className="bg-fuchsia-600 text-white py-2 px-4 rounded hover:bg-fuchsia-700"
+            className="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700"
           >
             Close
           </button>

@@ -142,7 +142,7 @@ const ForlandCargoTruck14Realft = () => {
               />
               {loading && (
                 <div className="flex flex-col items-center justify-center">
-                  <Oval color="#818CF8" secondaryColor="#FF8C00" height={40} width={40} />
+                  <Oval color="#818CF8"secondaryColor="#818CF8"height={40} width={40} />
                 </div>
               )}
             </div>

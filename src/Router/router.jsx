@@ -6,6 +6,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/effect-fade'
 import { Triangle } from 'react-loader-spinner'
 
+
 // Pages
 const DefaultLayout = lazy(() => import("../Views/DefaultLayout"));
 const NotFound = lazy(() => import("../Pages/Notfound"));

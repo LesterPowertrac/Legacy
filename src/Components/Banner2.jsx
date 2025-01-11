@@ -54,7 +54,7 @@ const Banner2 = () => {
 
                 {hoveindigo3
                 ?<span className='m-3 text-sm text-white text-center'>
-                    Needing a service that arrive ontime? Anywhere we have got coveindigo.
+                    Needing a service that arrive ontime? Anywhere we have got you covered.
                     <p className='text-center text-indigo-500 mt-3'>
                         Contact our Service Department:<br/>
                         +639199133313

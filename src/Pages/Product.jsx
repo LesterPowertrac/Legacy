@@ -140,9 +140,7 @@ const Product = () => {
 // Fetch images and set the images state
 const fetchImageBlob = async (url) => {
   try {
-    const { data } = await Axios.get(url, { responseType: "blob", headers: { 
-      'ngrok-skip-browser-warning': true
-    } });
+    const { data } = await Axios.get(url, { responseType: "blob"});
     return URL.createObjectURL(data);
   } catch (error) {
     console.error(`Failed to fetch image from ${url}:`, error);

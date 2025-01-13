@@ -14,7 +14,7 @@ const Home = lazy(() => import("../Pages/Home"));
 const About = lazy(() => import("../Pages/About"));
 const Product = lazy(() => import("../Pages/Product"));
 const Contact = lazy(() => import("../Pages/Contact"));
-const FileUpload = lazy(() => import("../Pages/FileUpload"));
+// const FileUpload = lazy(() => import("../Pages/FileUpload"));
 
 //Weichai
 const Bulldozer = lazy(() => import("../Pages/Descriptions/Weichai/Bulldozer"));
@@ -1527,26 +1527,26 @@ const router = createHashRouter([
         ),
       },
 
-      {
-        path: "/fileupload",
-        element: (
-          <Suspense fallback={
-            <div className='bg-zinc-900 h-[100vh] flex justify-center items-center'>
-                <Triangle
-                height="100"
-                width="100"
-                color="#818CF8"
-                ariaLabel="triangle-loading"
-                wrapperStyle={{}}
-                wrapperClass=""
-                visible={true}
-                />
-            </div>          
-          }>
-            <FileUpload />
-          </Suspense>
-        ),
-      },
+      // {
+      //   path: "/fileupload",
+      //   element: (
+      //     <Suspense fallback={
+      //       <div className='bg-zinc-900 h-[100vh] flex justify-center items-center'>
+      //           <Triangle
+      //           height="100"
+      //           width="100"
+      //           color="#818CF8"
+      //           ariaLabel="triangle-loading"
+      //           wrapperStyle={{}}
+      //           wrapperClass=""
+      //           visible={true}
+      //           />
+      //       </div>          
+      //     }>
+      //       <FileUpload />
+      //     </Suspense>
+      //   ),
+      // },
 
       
     ],
